@@ -1,0 +1,41 @@
+{
+    "name": "thecodingmachine/class-explorer",
+    "type": "library",
+    "description": "Find the list of all your classes and more.",
+    "keywords": ["classes", "reflection"],
+    "homepage": "https://github.com/thecodingmachine/class-explorer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Négrier",
+            "email": "d.negrier@thecodingmachine.com",
+            "homepage": "http://mouf-php.com"
+        }
+    ],
+    "require": {
+    	"php": ">=7.1"
+    },
+    "require-dev": {
+        "php-coveralls/php-coveralls": "^2.1",
+        "phpunit/phpunit": "^7.2.7",
+        "squizlabs/php_codesniffer": "^3.2.3",
+        "phpstan/phpstan": "^0.10.3",
+        "thecodingmachine/phpstan-strict-rules": "^0.10.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "TheCodingMachine\\ClassExplorer\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "TheCodingMachine\\ClassExplorer\\ClassExplorerPlugin",
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse src -c phpstan.neon --level=7 --no-progress -vvv"
+    },
+    "minimum-stability": "alpha",
+    "prefer-stable": true
+}
