@@ -14,4 +14,12 @@ class GlobClassExplorerTest extends TestCase
 
         $this->assertSame([GlobClassExplorer::class], $classes);
     }
+
+    public function testGetNotExistingClasses()
+    {
+        $explorer = new GlobClassExplorer('\\TheCodingMachine\\ClassExplorer\\Glob\\Foobar\\', new NullCache());
+        $classes = $explorer->getClasses();
+
+        $this->assertSame([], $classes);
+    }
 }

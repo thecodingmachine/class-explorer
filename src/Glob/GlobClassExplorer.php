@@ -90,8 +90,11 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @param string $directory
      * @return RegexIterator
      */
-    private static function getPhpFilesForDir(string $directory): RegexIterator
+    private static function getPhpFilesForDir(string $directory): \Iterator
     {
+        if (!\is_dir($directory)) {
+            return new \EmptyIterator();
+        }
         $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
         return new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
     }
