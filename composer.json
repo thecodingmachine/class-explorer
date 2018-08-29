@@ -31,6 +31,11 @@
             "TheCodingMachine\\ClassExplorer\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "TheCodingMachine\\ClassExplorer\\": "tests/"
+        }
+    },
     "extra": {
         "class": "TheCodingMachine\\ClassExplorer\\ClassExplorerPlugin",
         "branch-alias": {

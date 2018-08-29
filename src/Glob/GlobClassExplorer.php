@@ -36,12 +36,17 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @var int|null
      */
     private $cacheTtl;
+    /**
+     * @var ClassNameMapper|null
+     */
+    private $classNameMapper;
 
-    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null)
+    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null)
     {
         $this->namespace = $namespace;
         $this->cache = $cache;
         $this->cacheTtl = $cacheTtl;
+        $this->classNameMapper = $classNameMapper;
     }
 
     /**
@@ -68,8 +73,10 @@ class GlobClassExplorer implements ClassExplorerInterface
     private function doGetClasses(): array
     {
         $namespace = trim($this->namespace, '\\').'\\';
-        $mapper = ClassNameMapper::createFromComposerFile();
-        $files = $mapper->getPossibleFileNames($namespace.'XXX');
+        if ($this->classNameMapper === null) {
+            $this->classNameMapper = ClassNameMapper::createFromComposerFile();
+        }
+        $files = $this->classNameMapper->getPossibleFileNames($namespace.'XXX');
 
         $dirs = \array_map('dirname', $files);
 
