@@ -95,7 +95,7 @@ class GlobClassExplorer implements ClassExplorerInterface
 
     /**
      * @param string $directory
-     * @return RegexIterator
+     * @return \Iterator
      */
     private static function getPhpFilesForDir(string $directory): \Iterator
     {
