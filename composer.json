@@ -13,14 +13,18 @@
         }
     ],
     "require": {
-    	"php": ">=7.1"
+    	"php": ">=7.1",
+        "psr/simple-cache": "^1",
+        "mouf/classname-mapper": "^1"
     },
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.1",
         "phpunit/phpunit": "^7.2.7",
         "squizlabs/php_codesniffer": "^3.2.3",
         "phpstan/phpstan": "^0.10.3",
-        "thecodingmachine/phpstan-strict-rules": "^0.10.3"
+        "maglnet/composer-require-checker": "^1.0",
+        "thecodingmachine/phpstan-strict-rules": "^0.10.3",
+        "symfony/cache": "^4.1.4"
     },
     "autoload": {
         "psr-4": {
@@ -34,6 +38,8 @@
         }
     },
     "scripts": {
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
         "phpstan": "phpstan analyse src -c phpstan.neon --level=7 --no-progress -vvv"
     },
     "minimum-stability": "alpha",
