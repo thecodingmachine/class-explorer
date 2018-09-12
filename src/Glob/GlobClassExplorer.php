@@ -56,7 +56,7 @@ class GlobClassExplorer implements ClassExplorerInterface
      */
     public function getClasses(): array
     {
-        $key = 'globClassExplorer_'.$this->namespace;
+        $key = 'globClassExplorer_'.str_replace('\\', '_', $this->namespace);
         $classes = $this->cache->get($key);
         if ($classes === null) {
             $classes = $this->doGetClasses();
