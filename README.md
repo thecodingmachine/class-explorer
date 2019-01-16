@@ -33,3 +33,10 @@ This explorer:
 - assumes that if a file exists in a PSR-0 or PSR-4 directory, the class is available (assumes the file respects PSR-1)
 - makes no attempt at autoloading the class
 - is pretty fast, even when no cache is involved
+
+By default, `GlobClassExplorer` will load classes recursively in sub-namespaces. You can prevent it to load classes
+recursively by passing `false` to the 5th parameter:
+
+```php
+$explorer = new GlobClassExplorer('\\This\\Namespace\\Only\\', $psr16Cache, $cacheTtl, null, false);
+```
