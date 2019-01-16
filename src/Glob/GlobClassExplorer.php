@@ -3,12 +3,15 @@
 
 namespace TheCodingMachine\ClassExplorer\Glob;
 
+use DirectoryIterator;
+use GlobIterator;
 use Mouf\Composer\ClassNameMapper;
 use Psr\SimpleCache\CacheInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use TheCodingMachine\ClassExplorer\ClassExplorerInterface;
+use function var_dump;
 
 /**
  * Returns a set of classes by analyzing the PHP files in a directory.
@@ -40,13 +43,18 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @var ClassNameMapper|null
      */
     private $classNameMapper;
+    /**
+     * @var bool
+     */
+    private $recursive;
 
-    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null)
+    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true)
     {
         $this->namespace = $namespace;
         $this->cache = $cache;
         $this->cacheTtl = $cacheTtl;
         $this->classNameMapper = $classNameMapper;
+        $this->recursive = $recursive;
     }
 
     /**
@@ -82,7 +90,7 @@ class GlobClassExplorer implements ClassExplorerInterface
 
         $classes = [];
         foreach ($dirs as $dir) {
-            $filesForDir = \iterator_to_array(self::getPhpFilesForDir($dir));
+            $filesForDir = \iterator_to_array($this->getPhpFilesForDir($dir));
             $dirLen = \strlen($dir)+1;
             foreach ($filesForDir as $file) {
                 // Trim the root directory name and the PHP extension
@@ -97,12 +105,16 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @param string $directory
      * @return \Iterator
      */
-    private static function getPhpFilesForDir(string $directory): \Iterator
+    private function getPhpFilesForDir(string $directory): \Iterator
     {
         if (!\is_dir($directory)) {
             return new \EmptyIterator();
         }
-        $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
-        return new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
+        if ($this->recursive) {
+            $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
+            return new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
+        } else {
+            return new GlobIterator($directory.'/*.php');
+        }
     }
 }
