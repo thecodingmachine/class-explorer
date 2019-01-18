@@ -49,7 +49,7 @@ class GlobClassExplorer implements ClassExplorerInterface
      */
     private $recursive;
     /**
-     * @var string|null
+     * @var string
      */
     private $rootPath;
 
