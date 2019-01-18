@@ -3,6 +3,7 @@
 
 namespace TheCodingMachine\ClassExplorer\Glob;
 
+use function chdir;
 use DirectoryIterator;
 use GlobIterator;
 use Mouf\Composer\ClassNameMapper;
@@ -47,14 +48,19 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @var bool
      */
     private $recursive;
+    /**
+     * @var string
+     */
+    private $rootPath;
 
-    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true)
+    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true, ?string $rootPath = null)
     {
         $this->namespace = $namespace;
         $this->cache = $cache;
         $this->cacheTtl = $cacheTtl;
         $this->classNameMapper = $classNameMapper;
         $this->recursive = $recursive;
+        $this->rootPath = ($rootPath === null) ? __DIR__.'/../../../../../' : rtrim($rootPath, '/').'/';
     }
 
     /**
@@ -107,14 +113,18 @@ class GlobClassExplorer implements ClassExplorerInterface
      */
     private function getPhpFilesForDir(string $directory): \Iterator
     {
+        $oldCwd = getcwd();
+        chdir($this->rootPath);
         if (!\is_dir($directory)) {
             return new \EmptyIterator();
         }
         if ($this->recursive) {
             $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
-            return new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
+            $iterator = new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
         } else {
-            return new GlobIterator($directory.'/*.php');
+            $iterator = new GlobIterator($directory.'/*.php');
         }
+        chdir($oldCwd);
+        return $iterator;
     }
 }
