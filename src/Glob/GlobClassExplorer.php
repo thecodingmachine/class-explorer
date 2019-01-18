@@ -3,6 +3,7 @@
 
 namespace TheCodingMachine\ClassExplorer\Glob;
 
+use function chdir;
 use DirectoryIterator;
 use GlobIterator;
 use Mouf\Composer\ClassNameMapper;
@@ -107,14 +108,18 @@ class GlobClassExplorer implements ClassExplorerInterface
      */
     private function getPhpFilesForDir(string $directory): \Iterator
     {
+        $oldCwd = getcwd();
+        chdir(__DIR__.'/../../../../../');
         if (!\is_dir($directory)) {
             return new \EmptyIterator();
         }
         if ($this->recursive) {
             $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
-            return new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
+            $iterator = new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
         } else {
-            return new GlobIterator($directory.'/*.php');
+            $iterator = new GlobIterator($directory.'/*.php');
         }
+        chdir($oldCwd);
+        return $iterator;
     }
 }
