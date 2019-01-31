@@ -94,6 +94,8 @@ class GlobClassExplorer implements ClassExplorerInterface
 
         $dirs = \array_map('dirname', $files);
 
+        $oldCwd = getcwd();
+        chdir($this->rootPath);
         $classes = [];
         foreach ($dirs as $dir) {
             $filesForDir = \iterator_to_array($this->getPhpFilesForDir($dir));
@@ -104,6 +106,7 @@ class GlobClassExplorer implements ClassExplorerInterface
                 $classes[] = $namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix);
             }
         }
+        chdir($oldCwd);
         return $classes;
     }
 
@@ -113,8 +116,6 @@ class GlobClassExplorer implements ClassExplorerInterface
      */
     private function getPhpFilesForDir(string $directory): \Iterator
     {
-        $oldCwd = getcwd();
-        chdir($this->rootPath);
         if (!\is_dir($directory)) {
             return new \EmptyIterator();
         }
@@ -124,7 +125,6 @@ class GlobClassExplorer implements ClassExplorerInterface
         } else {
             $iterator = new GlobIterator($directory.'/*.php');
         }
-        chdir($oldCwd);
         return $iterator;
     }
 }
