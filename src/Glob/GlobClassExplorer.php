@@ -112,7 +112,7 @@ class GlobClassExplorer implements ClassExplorerInterface
 
     /**
      * @param string $directory
-     * @return \Iterator
+     * @return \Iterator<string>
      */
     private function getPhpFilesForDir(string $directory): \Iterator
     {
