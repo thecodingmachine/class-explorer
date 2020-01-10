@@ -40,3 +40,14 @@ recursively by passing `false` to the 5th parameter:
 ```php
 $explorer = new GlobClassExplorer('\\This\\Namespace\\Only\\', $psr16Cache, $cacheTtl, null, false);
 ```
+
+You can also get a class map using the `getClassMap` method.
+A class map is an array associating the name of the classes found (in key), to the file they are 
+linked to (a `SplFileInfo` in value).
+
+```php
+$classMap = $explorer->getClassMap();
+foreach ($classMap as $class => $fileInfo) {
+    echo 'Class '.$class.' found in file '.$fileInfo->getPathname();
+}
+```
