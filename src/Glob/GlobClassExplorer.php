@@ -3,6 +3,8 @@
 
 namespace TheCodingMachine\ClassExplorer\Glob;
 
+use SplFileInfo;
+use function array_keys;
 use function chdir;
 use DirectoryIterator;
 use GlobIterator;
@@ -66,14 +68,24 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Returns an array of fully qualified class names.
      *
-     * @return string[]
+     * @return array<int,string>
      */
     public function getClasses(): array
+    {
+        return array_keys($this->getClassMap());
+    }
+
+    /**
+     * Returns an array mapping the fully qualified class name to the file path.
+     *
+     * @return array<string,SplFileInfo>
+     */
+    public function getClassMap(): array
     {
         $key = 'globClassExplorer_'.str_replace('\\', '_', $this->namespace);
         $classes = $this->cache->get($key);
         if ($classes === null) {
-            $classes = $this->doGetClasses();
+            $classes = $this->doGetClassMap();
             $this->cache->set($key, $classes, $this->cacheTtl);
         }
         return $classes;
@@ -82,9 +94,9 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Returns an array of fully qualified class names, without the cache.
      *
-     * @return string[]
+     * @return array<string,SplFileInfo>
      */
-    private function doGetClasses(): array
+    private function doGetClassMap(): array
     {
         $namespace = trim($this->namespace, '\\').'\\';
         if ($this->classNameMapper === null) {
@@ -103,7 +115,7 @@ class GlobClassExplorer implements ClassExplorerInterface
             foreach ($filesForDir as $file) {
                 // Trim the root directory name and the PHP extension
                 $fileTrimPrefixSuffix = \substr($file, $dirLen, -4);
-                $classes[] = $namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix);
+                $classes[$namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix)] = $file;
             }
         }
         chdir($oldCwd);
@@ -112,7 +124,7 @@ class GlobClassExplorer implements ClassExplorerInterface
 
     /**
      * @param string $directory
-     * @return \Iterator
+     * @return \Iterator<SplFileInfo>
      */
     private function getPhpFilesForDir(string $directory): \Iterator
     {

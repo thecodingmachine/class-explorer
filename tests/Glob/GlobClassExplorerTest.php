@@ -40,4 +40,13 @@ class GlobClassExplorerTest extends TestCase
 
         $this->assertSame([], $classes);
     }
+
+    public function testGetClassMap()
+    {
+        $explorer = new GlobClassExplorer('\\TheCodingMachine\\ClassExplorer\\', new NullCache(), null, null, true, __DIR__.'/../..');
+        $classMap = $explorer->getClassMap();
+
+        $this->assertArrayHasKey(GlobClassExplorer::class, $classMap);
+        $this->assertSame('src/Glob/GlobClassExplorer.php', (string) $classMap[GlobClassExplorer::class]);
+    }
 }
