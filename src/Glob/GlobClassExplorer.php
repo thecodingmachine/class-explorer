@@ -54,6 +54,10 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @var string
      */
     private $rootPath;
+    /**
+     * @var string|null
+     */
+    private $key;
 
     public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true, ?string $rootPath = null)
     {
@@ -78,15 +82,17 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Returns an array mapping the fully qualified class name to the file path.
      *
-     * @return array<string,SplFileInfo>
+     * @return array<string,string>
      */
     public function getClassMap(): array
     {
-        $key = 'globClassExplorer_'.str_replace('\\', '_', $this->namespace);
-        $classes = $this->cache->get($key);
+        if ($this->key === null) {
+            $this->key = 'globClassExplorer_'.hash('md4', $this->namespace.'___'.$this->recursive.$this->rootPath);
+        }
+        $classes = $this->cache->get($this->key);
         if ($classes === null) {
             $classes = $this->doGetClassMap();
-            $this->cache->set($key, $classes, $this->cacheTtl);
+            $this->cache->set($this->key, $classes, $this->cacheTtl);
         }
         return $classes;
     }
@@ -94,7 +100,7 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Returns an array of fully qualified class names, without the cache.
      *
-     * @return array<string,SplFileInfo>
+     * @return array<string,string>
      */
     private function doGetClassMap(): array
     {
@@ -115,7 +121,7 @@ class GlobClassExplorer implements ClassExplorerInterface
             foreach ($filesForDir as $file) {
                 // Trim the root directory name and the PHP extension
                 $fileTrimPrefixSuffix = \substr($file, $dirLen, -4);
-                $classes[$namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix)] = $file;
+                $classes[$namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix)] = $file->getRealPath();
             }
         }
         chdir($oldCwd);

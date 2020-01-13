@@ -47,6 +47,6 @@ class GlobClassExplorerTest extends TestCase
         $classMap = $explorer->getClassMap();
 
         $this->assertArrayHasKey(GlobClassExplorer::class, $classMap);
-        $this->assertSame('src/Glob/GlobClassExplorer.php', (string) $classMap[GlobClassExplorer::class]);
+        $this->assertStringEndsWith('src/Glob/GlobClassExplorer.php', (string) $classMap[GlobClassExplorer::class]);
     }
 }
