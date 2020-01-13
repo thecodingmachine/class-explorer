@@ -43,11 +43,11 @@ $explorer = new GlobClassExplorer('\\This\\Namespace\\Only\\', $psr16Cache, $cac
 
 You can also get a class map using the `getClassMap` method.
 A class map is an array associating the name of the classes found (in key), to the file they are 
-linked to (a `SplFileInfo` in value).
+linked to (the real path of the file).
 
 ```php
 $classMap = $explorer->getClassMap();
-foreach ($classMap as $class => $fileInfo) {
-    echo 'Class '.$class.' found in file '.$fileInfo->getPathname();
+foreach ($classMap as $class => $file) {
+    echo 'Class '.$class.' found in file '.$file;
 }
 ```
