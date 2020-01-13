@@ -15,7 +15,8 @@
     "require": {
     	"php": ">=7.1",
         "psr/simple-cache": "^1",
-        "mouf/classname-mapper": "^1"
+        "mouf/classname-mapper": "^1",
+        "ext-hash": "*"
     },
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.1",
