@@ -70,8 +70,7 @@ class GlobClassExplorer implements ClassExplorerInterface
         ?ClassNameMapper $classNameMapper = null,
         bool $recursive = true,
         ?string $rootPath = null
-    )
-    {
+    ) {
         $this->namespace = $namespace;
         $this->cache = $cache;
         $this->cacheTtl = $cacheTtl;
@@ -111,7 +110,7 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Set to true to get classes in composer autoload-dev namespaces
      *
-     * @return $this
+     * @return void
      */
     public function setUseAutoloadDev(bool $useAutoloadDev)
     {
@@ -121,7 +120,7 @@ class GlobClassExplorer implements ClassExplorerInterface
     /**
      * Returns an array of fully qualified class names, without the cache.
      *
-     * @return array<string,string>
+     * @return array<string,string|false>
      */
     private function doGetClassMap(): array
     {
