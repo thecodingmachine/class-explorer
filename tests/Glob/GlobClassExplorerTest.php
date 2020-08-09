@@ -49,4 +49,14 @@ class GlobClassExplorerTest extends TestCase
         $this->assertArrayHasKey(GlobClassExplorer::class, $classMap);
         $this->assertStringEndsWith('src/Glob/GlobClassExplorer.php', (string) $classMap[GlobClassExplorer::class]);
     }
+
+    public function testGetClassesDev()
+    {
+        $explorer = new GlobClassExplorer('\\TheCodingMachine\\ClassExplorer\\', new NullCache(), null, null, true, __DIR__.'/../..');
+        $explorer->setUseAutoloadDev(true);
+        $classes = $explorer->getClasses();
+        $this->assertTrue(in_array(GlobClassExplorer::class, $classes));
+        $this->assertTrue(in_array(ClassExplorerInterface::class, $classes));
+        $this->assertTrue(in_array(GlobClassExplorerTest::class, $classes));
+    }
 }
