@@ -58,8 +58,19 @@ class GlobClassExplorer implements ClassExplorerInterface
      * @var string|null
      */
     private $key;
+    /**
+     * @var bool
+     */
+    private $useAutoloadDev = false;
 
-    public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true, ?string $rootPath = null)
+    public function __construct(
+        string $namespace,
+        CacheInterface $cache,
+        ?int $cacheTtl = null,
+        ?ClassNameMapper $classNameMapper = null,
+        bool $recursive = true,
+        ?string $rootPath = null
+    )
     {
         $this->namespace = $namespace;
         $this->cache = $cache;
@@ -98,6 +109,16 @@ class GlobClassExplorer implements ClassExplorerInterface
     }
 
     /**
+     * Set to true to get classes in composer autoload-dev namespaces
+     *
+     * @return $this
+     */
+    public function setUseAutoloadDev(bool $useAutoloadDev)
+    {
+        $this->useAutoloadDev = $useAutoloadDev;
+    }
+
+    /**
      * Returns an array of fully qualified class names, without the cache.
      *
      * @return array<string,string>
@@ -106,7 +127,11 @@ class GlobClassExplorer implements ClassExplorerInterface
     {
         $namespace = trim($this->namespace, '\\').'\\';
         if ($this->classNameMapper === null) {
-            $this->classNameMapper = ClassNameMapper::createFromComposerFile();
+            $this->classNameMapper = ClassNameMapper::createFromComposerFile(
+                null,
+                null,
+                $this->useAutoloadDev
+            );
         }
         $files = $this->classNameMapper->getPossibleFileNames($namespace.'XXX');
 
@@ -138,7 +163,9 @@ class GlobClassExplorer implements ClassExplorerInterface
             return new \EmptyIterator();
         }
         if ($this->recursive) {
-            $allFiles  = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS));
+            $allFiles  = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS)
+            );
             $iterator = new RegexIterator($allFiles, '/\.php$/i'/*, \RecursiveRegexIterator::GET_MATCH*/);
         } else {
             $iterator = new GlobIterator($directory.'/*.php');
