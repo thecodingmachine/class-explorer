@@ -13,8 +13,8 @@ class GlobClassExplorerTest extends TestCase
     {
         $explorer = new GlobClassExplorer('\\TheCodingMachine\\ClassExplorer\\', new NullCache(), null, null, true, __DIR__.'/../..');
         $classes = $explorer->getClasses();
-
-        $this->assertSame([GlobClassExplorer::class, ClassExplorerInterface::class], $classes);
+        $this->assertTrue(in_array(GlobClassExplorer::class, $classes));
+        $this->assertTrue(in_array(ClassExplorerInterface::class, $classes));
     }
 
     public function testGetClassesNonRecursive()
