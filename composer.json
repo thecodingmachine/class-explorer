@@ -1,5 +1,5 @@
 {
-    "name": "thecodingmachine/class-explorer",
+    "name": "masakni/class-explorer",
     "type": "library",
     "description": "Find the list of all your classes and more.",
     "keywords": ["classes", "reflection"],
