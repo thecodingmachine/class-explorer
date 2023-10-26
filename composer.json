@@ -13,8 +13,8 @@
         }
     ],
     "require": {
-    	"php": ">=7.1",
-        "psr/simple-cache": "^1",
+    	"php": ">=8",
+        "psr/simple-cache": "^1 || ^2 || ^3",
         "mouf/classname-mapper": "^1",
         "ext-hash": "*"
     },
@@ -40,6 +40,7 @@
     "extra": {
         "class": "TheCodingMachine\\ClassExplorer\\ClassExplorerPlugin",
         "branch-alias": {
+            "dev-simple-cache-3": "1.1337.x-dev",
             "dev-master": "1.1.x-dev"
         }
     },
