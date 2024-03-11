@@ -3,10 +3,10 @@
 
 namespace TheCodingMachine\ClassExplorer\Glob;
 
+use Psr\SimpleCache\InvalidArgumentException;
 use SplFileInfo;
 use function array_keys;
 use function chdir;
-use DirectoryIterator;
 use GlobIterator;
 use Mouf\Composer\ClassNameMapper;
 use Psr\SimpleCache\CacheInterface;
@@ -14,7 +14,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use TheCodingMachine\ClassExplorer\ClassExplorerInterface;
-use function var_dump;
 
 /**
  * Returns a set of classes by analyzing the PHP files in a directory.
@@ -30,34 +29,13 @@ use function var_dump;
  */
 class GlobClassExplorer implements ClassExplorerInterface
 {
-    /**
-     * @var string
-     */
-    private $namespace;
-    /**
-     * @var CacheInterface
-     */
-    private $cache;
-    /**
-     * @var int|null
-     */
-    private $cacheTtl;
-    /**
-     * @var ClassNameMapper|null
-     */
-    private $classNameMapper;
-    /**
-     * @var bool
-     */
-    private $recursive;
-    /**
-     * @var string
-     */
-    private $rootPath;
-    /**
-     * @var string|null
-     */
-    private $key;
+    private string $namespace;
+    private CacheInterface $cache;
+    private ?int $cacheTtl = null;
+    private ?ClassNameMapper $classNameMapper = null;
+    private bool $recursive;
+    private string $rootPath;
+    private ?string $key = null;
 
     public function __construct(string $namespace, CacheInterface $cache, ?int $cacheTtl = null, ?ClassNameMapper $classNameMapper = null, bool $recursive = true, ?string $rootPath = null)
     {
@@ -89,11 +67,20 @@ class GlobClassExplorer implements ClassExplorerInterface
         if ($this->key === null) {
             $this->key = 'globClassExplorer_'.hash('md4', $this->namespace.'___'.$this->recursive.$this->rootPath);
         }
-        $classes = $this->cache->get($this->key);
+        try {
+            $classes = $this->cache->get($this->key);
+        } catch (InvalidArgumentException $e) {
+            $classes = null;
+        }
         if ($classes === null) {
             $classes = $this->doGetClassMap();
-            $this->cache->set($this->key, $classes, $this->cacheTtl);
+            try {
+                $this->cache->set($this->key, $classes, $this->cacheTtl);
+            } catch (InvalidArgumentException $e) {
+                // @ignoreException
+            }
         }
+
         return $classes;
     }
 
@@ -124,6 +111,7 @@ class GlobClassExplorer implements ClassExplorerInterface
                 $classes[$namespace.\str_replace('/', '\\', $fileTrimPrefixSuffix)] = $file->getRealPath();
             }
         }
+        /* @phpstan-ignore-next-line */
         chdir($oldCwd);
         return $classes;
     }

@@ -1,5 +1,4 @@
 parameters:
-    ignoreErrors:
-     - "/Parameter #1 $directory of function chdir expects string, string|false given./"
+    level: 8
 includes:
    - vendor/thecodingmachine/phpstan-strict-rules/phpstan-strict-rules.neon
